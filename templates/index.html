@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeNews Guard - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb 0%, #25725c 100%);
+            border-color: #2575fc;
+        }
+
+        .btn-primary:hover {
+            background-color: #6a11cb;
+            border-color: #6a11cb;
+        }
+
+        .content-section {
+            padding: 5rem 0;
+            background-color: #f9f9f9;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        footer a {
+            color: white;
+        }
+
+        .content-section{
+            background: linear-gradient(135deg, #a2d2e5 0%, #f0ffff 100%);
+        }
+
+        .content-section h2 {
+            font-size: 2 rem;
+            font-weight: bold;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-section p {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}"><i class="fas fa-shield-alt"></i> FakeNews Guard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                </ul>
+                <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <h1>Detect Fake News with AI</h1>
+            <p>We use advanced AI to detect misinformation, ensuring you're informed with accurate news.</p>
+            <a href="#" id="getStarted" class="btn btn-primary btn-lg">Get Started</a> </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2>Inspiration</h2>
+            <p>In recent years, we've seen how misinformation can have serious consequences, from influencing
+                political campaigns to fueling public health crises. We believe that combatting fake news is an
+                important way to promote responsible journalism and protect the public.</p>
+
+            <h2>What it does</h2>
+            <p>The fake news detector project uses Flask, a Python web framework, to build a web app that
+                allows users to check whether a given news article is real or fake. The app takes in a news
+                article input by the user and applies machine learning models to predict its authenticity. The
+                models used are loaded from pre-trained files stored in the backend server and made using
+                different models in a Python notebook file, where we explored the runtime and square error of
+                different models on a Fake News dataset. The app presents the prediction results to the user,
+                along with a probability score. Users can also provide feedback by clicking on buttons
+                indicating whether the prediction was correct. The feedback data is stored in a CSV file on the
+                server for future analysis. The app also features a dark mode option, enabled by a toggle
+                switch.</p>
+
+            <h2>How we built it</h2>
+            <p>We built the fake news detector using Flask, a web application framework for Python, as the
+                backend server. The server receives user input, which is the text of the news article and passes
+                it through several machine-learning models to predict whether the news is real or fake. We
+                used the Natural Language Toolkit (NLTK) library to preprocess the text and extract its
+                features. The models we used include Random Forest, Bernoulli Naive Bayes, Decision Tree
+                Classifier, and Principal Component Analysis. We also used a TF-IDF vectorizer to convert the
+                text to numerical data that can be fed into the models.</p>
+            <p>We also built a simple user interface using HTML, CSS, and JavaScript. The interface allows
+                users to enter the text of the news article, submit it to the backend server for prediction,
+                and see the result. We also added a feedback system to allow users to indicate whether the
+                prediction was correct or not. This feedback is stored in a CSV file that can be used to
+                improve the performance of the machine learning models over time. Finally, we added a dark
+                mode feature to the interface using JavaScript and CSS.</p>
+
+            <h2>Challenges we ran into</h2>
+            <p>During the development of our fake news classifier, we faced several challenges. One of the
+                main challenges was the imbalance in the dataset, as we had more true news articles than fake
+                ones. This could lead to bias in the model towards predicting most articles as true. To
+                overcome this, we employed oversampling and undersampling techniques to balance the
+                dataset.</p>
+            <p>Another challenge we faced was the selection of the right set of features for the
+                classifier. We experimented with different feature sets and finally decided to use the
+                TfidfVectorizer to convert the text data to a numerical representation. However, fine-tuning
+                the hyperparameters of the vectorizer was a time-consuming task, as it required several
+                iterations to find the optimal values.</p>
+
+            <h2>Accomplishments that we're proud of</h2>
+            <p>We're proud to have successfully built and deployed a machine learning model to detect fake
+                news with an accuracy of over 98% on our test dataset. Our team put in countless hours of
+                research, experimentation, and collaboration to develop and fine-tune our model to achieve
+                this high level of accuracy. We're also proud to have created a user-friendly interface for our
+                model, which allows users to enter text and get a prediction on whether it's fake or real
+                news.</p>
+            <p>In addition, we're proud of the technical skills we developed throughout this project,
+                including proficiency in data cleaning, natural language processing, and machine learning. We
+                also honed our teamwork and communication skills, working together to overcome challenges and
+                achieve our goals. Finally, we're proud to have contributed to the ongoing effort to combat the
+                spread of misinformation, which has become a critical issue in today's society.</p>
+
+            <h2>What we learned</h2>
+            <p>Throughout this project, we learned how to build a machine learning model to classify news
+                articles as real or fake. We used the Passive Aggressive Classifier algorithm and a
+                TfidfVectorizer for feature extraction. We also learned how to preprocess text data by removing
+                special characters and punctuation, lowercasing the text, and removing stopwords.</p>
+            <p>In addition, we learned how to use the Kaggle API to download the dataset and how to mount
+                Google Drive in Colab to access files stored in the cloud. We also learned how to use the
+                pandas library to manipulate and combine datasets.</p>
+            <p>We also learned how to evaluate the performance of the model using metrics such as accuracy
+                and confusion matrix. We also learned how to save the trained model and the vectorizer to
+                disk using the pickle library.</p>
+            <p>Overall, this project provided us with valuable experience in working with text data and
+                building a machine learning model to classify it. We gained insights into the preprocessing
+                techniques, feature extraction, model selection, and evaluation that are essential in
+                building a successful machine learning model.</p>
+        </div>
+    </section>
+
+    <footer class="text-center">
+        <p>&copy; 2025 FakeNews Guard. All rights reserved.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#privacy-policy" class="text-white">Privacy Policy</a></li>
+            <li class="list-inline-item"><a href="#terms-of-service" class="text-white">Terms of Service</a></li>
+            <li class="list-inline-item"><a href="#contact" class="text-white">Contact Us</a></li>
+        </ul>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    const getStartedButton = document.getElementById("getStarted");
+
+    if (getStartedButton) {
+        getStartedButton.addEventListener("click", function () {
+            fetch("/check_session")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.logged_in) {
+                        window.location.href = "{{ url_for('analyze') }}";  // Correct: url_for inside JS
+                    } else {
+                        window.location.href = "{{ url_for('login') }}"; // Correct: url_for inside JS
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking session:", error);
+                    alert("An error occurred. Please try again later.");
+                });
+        });
+    } else {
+        console.error("Get Started button not found!");
+    }
+});
+
+</script>
+
+</body>
+
+</html>
