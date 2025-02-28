@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeNews Guard - Analyze</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a2d2e5 0%, #f0ffff 100%);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: white !important;
+        }
+
+        .result-card {
+            margin-top: 20px;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        footer a {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}"><i class="fas fa-shield-alt"></i> FakeNews Guard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('analyze') }}">Analyze</a>
+                    </li>
+                </ul>
+                <div id="userMenu">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" style="background: linear-gradient(135deg, #6a11cb 0%, #25725c 100%)" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            User Menu
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('index') }}" id="logoutBtn">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="dashboard" class="container my-5">
+        <h2 class="text-center mb-4">News Validator Dashboard</h2>
+
+        <form id="newsForm" method="POST" action="{{ url_for('analyze') }}" class="mb-5">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label for="newsContent" class="form-label">News Content</label>
+                <textarea class="form-control" id="newsContent" name="news" rows="6" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Analyze News</button>
+        </form>
+
+        <div id="resultCard" class="card result-card" style="display: none;">
+            <div class="card-body text-center">
+                <h4 class="card-title mb-3">Analysis Result</h4>
+                <div id="resultContent">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-5">
+            <div class="card-header">
+                Recent Predictions
+            </div>
+            <div class="card-body">
+                <ul id="predictions-list" class="list-group">
+                    <li class="list-group-item">Loading predictions...</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center">
+        <p>&copy; 2025 FakeNews Guard. All rights reserved.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#privacy-policy" class="text-white">Privacy Policy</a></li>
+            <li class="list-inline-item"><a href="#terms-of-service" class="text-white">Terms of Service</a></li>
+            <li class="list-inline-item"><a href="#contact" class="text-white">Contact Us</a></li>
+        </ul>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const newsForm = document.getElementById('newsForm');
+            const predictionsList = document.getElementById("predictions-list");
+            const resultCard = document.getElementById('resultCard');
+            const resultContent = document.getElementById('resultContent');
+            const logoutButton = document.getElementById("logoutBtn");
+
+            if (newsForm) {
+                newsForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const newsContent = document.getElementById('newsContent').value;
+
+                    resultCard.style.display = 'block';
+                    resultContent.innerHTML = `<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>`;
+
+                    fetch(newsForm.action, {
+                        method: newsForm.method,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                        },
+                        body: new URLSearchParams({
+                            'news': newsContent
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => { throw new Error(err.message || "Analysis failed") })
+                            }
+                            return response.json()
+                        })
+                        .then(data => {
+                            const prediction = data.prediction;
+                            resultContent.innerHTML = `
+                                <div class="alert ${prediction === 'Fake News' ? 'alert-danger' : 'alert-success'} mb-0">
+                                    <h4>${prediction}</h4>
+                                    <p class="mb-0">${prediction === 'Fake News' ? 
+                                    'This news article shows signs of being potentially false or misleading.' : 
+                                    'This news article appears to be legitimate based on our analysis.'}</p>
+                                </div>
+                            `;
+                            fetchPredictions(); // Update predictions list
+                            document.getElementById('newsContent').value = ''; // Clear the text area after prediction
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            resultContent.innerHTML = `
+                                <div class="alert alert-danger mb-0">
+                                    <h4>Error</h4>
+                                    <p class="mb-0">${error.message}</p>
+                                </div>
+                            `;
+                        });
+                });
+            } else {
+                console.error("News form not found!");
+            }
+
+            function fetchPredictions() {
+                fetch('/predictions')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to fetch predictions");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        predictionsList.innerHTML = ""; // Clear existing list
+
+                        if (data.length === 0) {
+                            predictionsList.innerHTML = "<li class='list-group-item'>No recent predictions yet.</li>";
+                            return;
+                        }
+
+                        data.forEach(p => {
+                            const listItem = document.createElement("li");
+                            listItem.classList.add("list-group-item");
+                            listItem.innerHTML = `${p.news_text.substring(0, 50)}... - <span class="math-inline">${p.prediction} (${new Date(p.date).toLocaleString()})</span>`;
+                            predictionsList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching predictions:", error);
+                        predictionsList.innerHTML = "<li class='list-group-item'>Error loading predictions.</li>";
+                    });
+            }
+
+            fetchPredictions(); // Initial call
+            setInterval(fetchPredictions, 5000); // Update every 5 seconds
+
+            if (logoutButton) {
+    logoutButton.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value  // Include CSRF token
+            },
+            credentials: 'include'  // Ensure cookies are sent
+        })
+        .then(response => response.json())  // Expect JSON response
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;  // Redirect to home page
+            } else {
+                alert("Logout failed. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Logout error:", error);
+            alert("An error occurred during logout.");
+        });
+    });
+} else {
+    console.error("Logout button not found!");
+}
+
+        });
+    </script>
+
+</body>
+
+</html>
